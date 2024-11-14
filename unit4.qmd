@@ -1,0 +1,623 @@
+---
+title: "U4S2: Control Structures"
+editor: visual
+format: revealjs
+execute: 
+  echo: true
+---
+
+## Everything Depends
+
+-   What's for dinner? It depends (on...)
+
+-   Is cardio or weight training better? It depends (on...)
+
+-   Shall I drop this class? It depends (on...)
+
+Quite likely there's a variable behind every decision. Control structures in R guide the flow of execution of the program based on conditions. 
+
+
+## If-else (1)
+
+```{r}
+my_number <- 5
+
+if (my_number > 0) {
+  "My number is positive."
+}
+```
+
+## If-else (1.25)
+
+The condition should always evaluate to `TRUE` or `FALSE`
+
+```{r}
+my_number > 0
+```
+
+## If-else (1.5)
+
+But, the length of the vector should only be 1, and should never be `NA`.
+
+```{r error=TRUE}
+if (c(TRUE, TRUE, TRUE)) {
+  "It's super duper TRUE!" 
+  }
+```
+
+tip: `isTRUE()` tells you whether a value is a 1-length `TRUE` with `TRUE` or `FALSE`
+
+```{r error = TRUE}
+my_life_has_a_purpose <- NA 
+if (my_life_has_a_purpose) "Stop worrying."
+```
+
+tip：`is.na()` tells you whether a value is "Not Available" with `TRUE` or `FALSE`
+
+## If-else (1.55)
+
+tip: Recall that functions which co-domain is `TRUE` and `FALSE` are called "predicates". You can reverse a predicate with `Negate()`
+
+```{r}
+isnt_na <- Negate(is.na)
+isnt_na(100)
+```
+
+## If-else (1.75)
+
+`If-else` with the `else`
+
+```{r}
+tasty <- FALSE # We can use a named value. 
+
+if (tasty) {
+  "Wow, this lasagna is amazing!"
+} else {
+  "hmmmm... I'm not hungry now."
+}
+```
+
+## If-else (2)
+
+`If-else` with the `else if`.
+
+```{r}
+if (my_number > 0) {   
+  "My number is positive." 
+} else if (my_number == 0){   
+    "My number is 0." 
+} else if (my_number < 0){   
+    "My number is negative." 
+}
+```
+
+Tip: Do your best to enumerate all possible conditions. Try not to leave a catch-all `else`.
+
+## If-else (2.5)
+
+`else if` is available because you don't want to write this:
+
+```{r}
+if (my_number > 0) {
+  "My number is positive."
+} else {
+  if (my_number == 0){
+    "My number is 0."
+  } else {
+    if (my_number < 0) {
+      "My number is negative."
+    }
+  }
+}
+```
+
+## If-else (3）
+
+Complex decision structures involving more than one conditions.
+
+```{r}
+current_temperature_f <- 72  # Temperature in degrees Fahrenheit
+
+if(current_temperature_f > 86) {
+  print("It's extremely hot outside. Stay hydrated and avoid direct sunlight.")
+} else if(current_temperature_f > 68 && current_temperature_f <= 86) {
+  print("The weather is pleasant. It's a good time for outdoor activities.")
+} else if(current_temperature_f > 50 && current_temperature_f <= 68) {
+  print("It's getting cooler. Consider wearing a light jacket.")
+} else {
+  print("It's quite cold. Make sure to wear warm clothes.")
+}
+
+if(current_temperature_f < 32 || current_temperature_f > 95) {
+  print("Warning: Extreme weather conditions detected. Please take necessary precautions.")
+}
+```
+
+## If-else (3.33)
+
+Complex decision structures involving more than one variables.
+
+```{r}
+current_temperature_f <- 40  # Temperature in degrees Fahrenheit
+is_raining <- TRUE  
+
+if(current_temperature_f > 86 && !is_raining) {
+  print("It's extremely hot outside and not raining. Stay hydrated and avoid direct sunlight.")
+} else if(current_temperature_f > 86 && is_raining) {
+  print("It's extremely hot outside and raining. Be cautious of humid conditions.")
+} else if(current_temperature_f > 68 && current_temperature_f <= 86 && !is_raining) {
+  print("The weather is pleasant and not raining. It's a good time for outdoor activities.")
+} else if(current_temperature_f > 50 && current_temperature_f <= 68) {
+  print("It's getting cooler. Consider wearing a light jacket, especially if it's raining.")
+} else {
+  print("It's quite cold. Make sure to wear warm clothes, and bring an umbrella if it's raining.")
+}
+```
+
+## If-else (3.66)
+
+Research on logical operators in R: `&&`, `||`, and `!` and find out how you can use them together.
+
+## If-else Involving Assignments (1)
+
+You can do it in every branch. Beware typos.
+
+```{r}
+gas_price <- 2.9
+
+if (gas_price > 4) {
+  price_level <- "high"
+} else if (gas_price > 2.5) {
+  price_level <- "mid"
+} else if (gas_price <= 2.5) {
+  price_level <- "low"
+} else if (gas_price <= 0) {
+  price_level <- "???"
+}
+
+price_level
+```
+
+## If-else Involving Assignments (2)
+
+Or you can use `<-` once on the whole form.
+
+```{r}
+gas_price <- 2.9
+
+price_level <- 
+  if (gas_price > 4) {
+    "high"
+  } else if (gas_price > 2.5) {
+    "mid"
+  } else if (gas_price <= 2.5 && gas_price > 0) {
+    "low"
+  } else if (gas_price <= 0) {
+    "???"
+  }
+
+price_level
+```
+
+## If-else Involving Function Returns (1)
+
+As we already know, functions return the last value in its body.
+
+```{r}
+my_fn <- function(){
+  1 # no matter 
+  x <- 2 # what we do
+  3 # it's always the last line
+}
+my_fn()
+```
+
+## If-else Involving Function Returns (2)
+
+If the body is mainly an `if-else` form, just use whole form.
+
+```{r}
+price_level <- function(gas_price){
+  if (gas_price > 4) {
+    "high"
+  } else if (gas_price > 2.5) {
+    "mid"
+  } else if (gas_price <= 2.5 && gas_price > 0) {
+    "low"
+  } else if (gas_price <= 0) {
+    "???"
+  }
+}
+
+price_level(1.79)
+```
+
+## If-else Involving Function Returns (2.5)
+
+You may also want to assign to a name, and explicitly put it at the end.
+
+```{r}
+price_level <- function(gas_price){
+  if (gas_price > 4) {
+    result <- "high"
+  } else if (gas_price > 2.5) {
+    result <- "mid"
+  } else if (gas_price <= 2.5) {
+    result <- "low"
+  } else if (gas_price <= 0) {
+    result <- "???"
+  }
+  result
+}
+
+price_level(1.79)
+```
+
+## If-else Involving Function Returns (3)
+
+However, you can make the function return early with `return`() function if it makes sense to you.
+
+```{r}
+price_level <- function(gas_price){
+  if (gas_price <= 0) {
+    return("???")
+    # but ??? isn't really a price... 
+    # try stop() to signal an error condition, 
+    # so there's no mistake that something wrong happened
+  }
+  
+  print("Now we have been given a price that makes sense...")
+    # It's sometimes a good idea to give out useful information
+    # But this line should not be necessary in the long run
+  
+  if (gas_price > 4) {
+    "high"
+  } else if (gas_price > 2.5) {
+    "mid"
+  } else if (gas_price <= 2.5) {
+    "low"
+  } 
+}
+```
+
+## If-else Involving Function Returns (3.5)
+
+When a function returns early, any code after the `return()` line will not be executed.
+
+```{r}
+price_level(-1.5)
+```
+
+```{r}
+price_level(6.66)
+```
+
+## If-else Involving Function Returns (4)
+
+It's also OK to `return()` every possible return value. But some may consider it bad style.
+
+```{r}
+price_level <- function(gas_price){
+  if (gas_price <= 0) {
+    return("???")
+  }
+  
+  print("Now we have been given a price that makes sense...")
+  
+  if (gas_price > 4) {
+    return("high")
+  } else if (gas_price > 2.5) {
+    return("mid")
+  } else if (gas_price <= 2.5) {
+    return("low")
+  } 
+}
+```
+
+## ifelse()
+
+The **`ifelse`** function is a vectorized alternative to the if-else statement, ideal for operations on vectors.
+
+"Vectorized" means the function applies the same operation on each element of a vector.
+
+```{r}
+x <- c(1, 2, 3, 4, 5)
+ifelse(x > 3, "Greater than 3", "Not greater than 3")
+```
+
+## Get in the Flow
+
+You may find yourself needing to do something again and again.
+
+```{r}
+ma_numbas <- c(0.1, 5.2, pi, 88)
+print(paste("Squea o Ma Numba iz:", ma_numbas[1]^2))
+print(paste("Squea o Ma Numba iz:", ma_numbas[2]^2))
+print(paste("Squea o Ma Numba iz:", ma_numbas[3]^2))
+print(paste("Squea o Ma Numba iz:", ma_numbas[4]^2))
+```
+
+## For-in Loop (1)
+
+-   A for-in loop helps you repeat acitons based on each element of a vector (list).
+
+```{r}
+for (num in ma_numbas) {
+  print(paste("Squea o Ma Numba iz:", num^2))
+}
+```
+
+## For-in Loop (1.5)
+
+You may find out an iterator is left behind after the execution. This is by design but rarely useful nowadays. You can safely ignore it or remove it (if a concern).
+
+```{r}
+num
+```
+
+## For-in Loop (2)
+
+You can also make the for-in loop to update a result variable with each iteration.
+
+```{r}
+# Name an empty result
+ma_results <- c()
+
+# Grow the result
+for (num in ma_numbas) {
+  ma_results <- c(ma_results, num^2)
+}
+
+ma_results
+```
+
+However, this is inefficient over large data.
+
+## For-in Loop (3)
+
+Loop over the indices and refer to two pieces of data altogether.
+
+```{r}
+names <- c("Alice", "Bob", "Charlie")
+ages <- c(25, 30, 22)
+```
+
+```{r}
+# Initiate an empty list
+results <- c()
+
+# Use a for loop to iterate over the indices of the vectors
+for (i in 1:length(names)) { 
+  # Extract elements from both vectors and store as a pair in the list
+  results[i] <- paste(names[i], "is", ages[i], "years old.")
+}
+results
+```
+
+## For-in Loops (3.5)
+
+We use a 1-to-length vector to iterate upon.
+
+```{r}
+1:length(names)
+```
+
+The `seq_along()` function does the same thing. (Why?)
+
+```{r}
+seq_along(names)
+```
+
+## Vectorized Functions (1)
+
+Based on a previous example you may be attempted to do this:
+
+```{r}
+ma_numbas <- c(1, 2, 3, 4)
+ma_results <- c()
+
+for (num in ma_numbas) {
+  ma_results <- c(ma_results, num + 1)
+}
+
+ma_results
+```
+
+## Vectorized Functions (1.5)
+
+However:
+
+```{r}
+ma_numbas + 1
+```
+
+The `+` function can already operate on a longer-than-1-length vector to each element.
+
+## Vectorized Functions (2)
+
+So are many other functions in R.
+
+```{r}
+names <- c("Alice", "Bob", "Charlie")
+ages <- c(25, 30, 22)
+
+paste(names, "is", ages, "years old.")
+```
+
+```{r}
+sqrt(c(4, 49, 100))
+```
+
+## Vectorized Functions (3)
+
+You may be able to roll your own "vectorized function" with an easy conversion step. Find out how with `?Vectorize` .
+
+## While & Repeat Loop （1）
+
+Sometime you must keep doing things not based on a known vector. For example, you may want to know the smallest positive integer which square exceeds 50.
+
+```{r}
+n <- 1
+
+while (n^2 <= 50) { # terminate condition
+  n <- n + 1
+}
+
+n
+```
+
+## While & Repeat Loop (1.5)
+
+```{r}
+n <- 1
+
+repeat {
+  if (n^2 > 50) {  # terminate condition
+    break  # break explicitly forces the loop to end.
+  }
+  n <- n + 1
+}
+
+n
+```
+
+## While & Repeat Loop (2)
+
+-   Only in rare circumstances you may find these necessary.
+
+-   What happens if the terminate condition is never met?
+
+-   Can one type of loop be used to implement another?
+
+## Loops that Operates with Functions (1)
+
+Say you have a familiar function that does certain things:
+
+```{r}
+square <- function(x) x^2
+```
+
+We can use `Map()` to
+
+```{r}
+numbers <- c(1, 2, 3, 4, 5)
+unlist(Map(square, numbers))
+```
+
+It's helpful to compact the result `unlist()` because the result in in list format, as `Map()` also works on lists.
+
+Recalls that a list is a more general format than a vector.
+
+## Loops that Operates with Functions (2)
+
+An alternative is `lapply()`
+
+```{r}
+unlist(lapply(numbers, square))
+```
+
+`sapply()` does the `unlist()` for you.
+
+```{r}
+sapply(numbers, square)
+```
+
+`purrr::map()`
+
+```{r}
+unlist(purrr::map(numbers, square))
+```
+
+## Loops that Operates with Functions (3)
+
+-   A functions is more readable and has no spill-outs to the Workspace
+
+```{r}
+Map(
+  function(x){
+    y <- x + 1
+    z <- y^2
+    z
+  }, 
+  c(1,2,3)
+)
+```
+
+```{r}
+result <- c()
+for (x in c(1,2,3)) {
+  y <- x + 1
+  z <- y^2
+  result <- c(result, z)
+}
+result
+```
+
+## What if There's No Loop at All?
+
+-   But we still want to do things again and again
+
+Consider this function:
+
+```{r}
+my_fn <- function(x){
+  y <- x + 1
+  z <- y^2
+  z
+}
+```
+
+## Loop with Recursion (1)
+
+To call oneself within a function is called "recursion".
+
+We can achieve what for-in loop gives us with recursion.
+
+```{r}
+my_fn_recur <- function(lst){
+  if (length(lst) == 0) { # If the vector is empty
+    c() # return an empty vector, naturally
+  } else { # otherwise...
+    x <- lst[[1]]  # Take the first element as x
+    y <- x + 1  # Apply the original function's logic to the first element
+    z <- y^2
+    c(z, # keep the result z
+      my_fn_recur(lst[-1])) # Start another round without the first element
+  }
+}
+my_fn_recur(c(1,2,3,4))
+```
+
+-   Grinding down the vector one by one
+
+-   In each recurrence, the problem becomes a little *easier*
+
+## Loop with Recursion (2)
+
+Alternatively, use an accumulator object to hold the progress.
+
+```{r}
+my_fn_recur_accum <- function(lst, accum = c()) {
+  if (length(lst) == 0) {
+    accum  # Return the accumulator when the list is empty
+  } else {
+    x <- lst[[1]]  # Take the first element of the list
+    y <- x + 1  # Apply the original function's logic to the first element
+    z <- y^2
+    # termed "tail recursion" when the last expression is the recursive call
+    my_fn_recur_accum(lst[-1], 
+                      c(accum, 
+                        z)) 
+  }
+}
+my_fn_recur_accum(c(1,2,3,4))
+```
+
+## Loop with Recursion (3)
+
+The above approximates for-in loops.
+
+How would you implement while and repeat loops?
+
+How would you implement `break` or `next`?
+

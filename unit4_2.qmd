@@ -1,0 +1,142 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+```{r}
+#| echo: false
+library(tidyverse)
+```
+
+```{r}
+square <- function(x = 1) x^2
+```
+
+## Functions, Again
+
+What goes into a function?
+
+-   *Formal* Arguments
+
+```{r}
+# _formal_ arguments
+formals(square)
+```
+
+-   Body
+
+```{r}
+body(square)
+```
+
+-   Environment
+
+```{r}
+environment(square)
+```
+
+## Functions, Again
+
+On environment:
+
+```{r}
+lucky_num <- 7
+lucky_num
+```
+
+```{r}
+add_to_lucky_num <- function(x){
+  lucky_num + x
+}
+add_to_lucky_num(1)
+```
+
+`add_to_lucky_num()` can see its outside and grab `lucky_num`.
+
+```{r}
+"lucky_num" %in%  ls(environment(add_to_lucky_num))
+```
+
+## Functions, Again
+
+This is convenient, however what's outside could change. Use this to your advantage but beware.
+
+```{r}
+lucky_num <- 777 
+add_to_lucky_num(1)
+```
+
+```{r}
+#| error: true
+rm(lucky_num)
+add_to_lucky_num(1)
+```
+
+## Packing up Loose Code
+
+Your may have loose code that you want to re-use.
+
+```{r}
+library(ggplot2)
+library(dplyr)
+
+diamonds %>% 
+  ggplot(aes(x = cut, 
+             y = price, 
+             fill = cut)) +
+  geom_boxplot(outlier.shape = NA) +  
+  coord_flip() +  
+  labs(x = "Cut Quality",
+       y = "Price") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+## Packing up Loose Code
+
+Identify moving parts you're interested in. In my case, I want to make the plot based on different combinations of categorical variables and numerical variables. So...
+
+```{r}
+diamonds_boxplot_by <- function(cat = "cut", num = "price"){
+  diamonds %>% 
+    ggplot(aes(x = !!sym(cat), 
+               # to make ggplot2 understand character as symbols
+               y = !!sym(num), 
+               fill = !!sym(cat))) +
+    geom_boxplot(outlier.shape = NA) +  
+    coord_flip() +  
+    labs(x = stringr::str_to_title(cat),
+         y = stringr::str_to_title(num)) +
+    theme_minimal() +
+    theme(legend.position = "none")
+}
+```
+
+## Packing up Loose Code
+
+```{r}
+diamonds_boxplot_by()
+```
+
+## Packing up Loose Code
+
+We can try out our newly made function with arguments. s
+
+```{r}
+diamonds_boxplot_by("color")
+```
+
+```{r}
+purrr::map(c("cut", "color", "clarity"), 
+           ~ diamonds_boxplot_by(cat = .x))
+```
+
+```{r}
+purrr::map(c("cut", "color", "clarity"), 
+           ~ diamonds_boxplot_by(cat = .x, 
+                                 num = "table"))
+```
+
+
+
